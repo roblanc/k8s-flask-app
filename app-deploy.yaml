@@ -1,0 +1,40 @@
+---
+# 1. DEPLOYMENT: Manages the Pods and ensures desired replica count (3)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app-deployment
+  labels:
+    app: flask-app
+spec:
+  replicas: 3 # Your desired state
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask-app-container
+        image: romica/web-app:v1 # Your custom image!
+        imagePullPolicy: Never # Crucial: Uses the locally loaded image
+        ports:
+        - containerPort: 8080
+        env:
+        - name: GREETING
+          value: "Hello from Kubernetes Orchestration!" # The custom message
+---
+# 2. SERVICE: Exposes the Deployment's Pods for network access
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+spec:
+  selector:
+    app: flask-app # Matches the Deployment labels
+  ports:
+    - port: 80 # Internal cluster port
+      targetPort: 8080 # Port inside the container
+  type: NodePort # Exposes the Service outside the cluster
