@@ -18,13 +18,13 @@ spec:
     spec:
       containers:
       - name: flask-app-container
-        image: romica/web-app: latest # Your custom image!
+        image: netrebnic/web-app: latest # Your custom image!
         imagePullPolicy: Always # Crucial: Uses the locally loaded image
         ports:
         - containerPort: 8080
         env:
         - name: GREETING
-          value: "Hello from Kubernetes Orchestration!" # The custom message
+          value: "Hellorrr from Kubernetes Orchestration!" # The custom message
 ---
 # 2. SERVICE: Exposes the Deployment's Pods for network access
 apiVersion: v1
