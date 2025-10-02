@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: flask-app-container
-        image: netrebnic/web-app:v2 # Your custom image!
+        image: netrebnic/web-app:db58ece # Your custom image!
         imagePullPolicy: Always # Crucial: Uses the locally loaded image
         ports:
         - containerPort: 8080
