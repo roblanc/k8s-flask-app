@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
       - name: flask-app-container
-        image: romica/web-app:v1 # Your custom image!
-        imagePullPolicy: Never # Crucial: Uses the locally loaded image
+        image: romica/web-app: latest # Your custom image!
+        imagePullPolicy: Always # Crucial: Uses the locally loaded image
         ports:
         - containerPort: 8080
         env:
