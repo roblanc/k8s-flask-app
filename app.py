@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 
 # Get environment variable, or use a default
-MESSAGE = os.environ.get("GREETING", "Hello from a Custom DevOps Container!")
+MESSAGE = os.environ.get("GREETING", "Hello from Flask in K8s!")
 
 @app.route('/')
 def hello_devops():
