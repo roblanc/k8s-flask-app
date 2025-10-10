@@ -18,7 +18,8 @@ The CI/CD pipeline is **fully functional and robust**. The application is curren
 
 *   **Application:** Flask App V2 (**`Hello from Flask in K8s!FINAL V2 TEST`**) is successfully running.
 *   **Deployment:** Managed by the `flask-app-deployment` using image tag `netrebnic/web-app:db58ece`.
-*   **Tools Ready:** `kubectl`, `helm`, and a local Kubernetes environment (Minikube/K3s) are configured.
+*   **Tools Ready:** `kubectl`, `helm` (v3.19.0), and a local Kubernetes environment (Minikube/K3s) are configured.
+    *   **Helm Explained:** Helm acts as the package manager for Kubernetes, simplifying the deployment and management of applications by using "Charts" to define, install, and upgrade even complex Kubernetes applications.
 *   **Next Phase:** Monitoring and resource optimization are ready to begin.
 
 ## Next Steps and Roadmap
