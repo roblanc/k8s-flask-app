@@ -4,11 +4,11 @@ import os
 app = Flask(__name__)
 
 # Get environment variable, or use a default
-MESSAGE = os.environ.get("GREETING", "Hello from a Custom DevOps Container!")
+MESSAGE = os.environ.get("GREETING", "Hello from Flask in K8s!FINAL V2 TESTTT ")
 
 @app.route('/')
 def hello_devops():
-    return f'<h1>{MESSAGE}</h1><h2>Containerized by Romica</h2>'
+    return f'<h1>{MESSAGE}</h1><h2>Containerized by RDD</h2>'
 
 if __name__ == '__main__':
     # Listen on all interfaces (0.0.0.0) and a common web port (8080)
