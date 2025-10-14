@@ -34,3 +34,44 @@
 
 **Challenge:** Overcame persistent issues with Kubernetes using a cached image tag.
 **Resolution:** Switched the deployment manifest to use the **unique, immutable Short Commit SHA (`db58ece`)** instead of the ambiguous `:latest` tag, ensuring guaranteed pull of the new code.
+
+## October 14, 2025 (Continued)
+
+### Discussion: Public Deployment Options
+
+**Goal:** Explore options for deploying the Flask application to a publicly accessible server.
+
+**Discussion Points:**
+*   **Vercel/Netlify:** Determined these are not ideal for a persistent Flask backend application, as they are primarily suited for frontends and serverless functions.
+*   **Suitable Platforms:** Identified Container-as-as-Service (CaaS) platforms (e.g., Google Cloud Run, Render, Fly.io) and Kubernetes clusters (e.g., GKE, EKS) as more appropriate.
+*   **Free Tier Options:** Explored free tier options, with **Google Cloud Run** being highlighted as a strong recommendation due to its serverless nature, generous free tier, and native Docker support.
+
+**Current Status:** The idea of deploying to Google Cloud Run is noted for future consideration. The immediate focus is not on public deployment.
+
+## October 14, 2025 (Continued)
+
+### Clarification: Local vs. Remote Docker Images
+
+**Curiosity:** User inquired about the distinction between running a locally built Docker image (`k8s-flask-app`) and an image pulled from a remote registry (`netrebnic/web-app:latest`).
+
+**Explanation:**
+*   **Local Image (`k8s-flask-app`):** Built directly on the user's machine (`docker build .`). Used for quick local development and testing.
+*   **Remote Image (`netrebnic/web-app:latest`):** Built and pushed by the CI/CD pipeline (e.g., GitHub Actions) to a remote Docker registry (e.g., Docker Hub). This is the official, pipeline-verified artifact.
+
+**Key Takeaway:** The remote image ensures consistency and reliability, as it's the exact artifact that passed through the automated CI/CD pipeline, crucial for deployment to various environments.
+
+## October 14, 2025 (Continued)
+
+### Troubleshooting: Minikube ImagePullBackOff (DNS Issue) - Persistent Failures
+
+**Problem:** Encountered `ImagePullBackOff` error for Prometheus pods, with `dial tcp: lookup registry.k8s.io ... server misbehaving` in pod events. This evolved into Minikube failing to start the Kubernetes control plane components (`kube-apiserver`, `kube-scheduler`, `kube-controller-manager`) with `connection refused` and `context deadline exceeded` errors.
+
+**Troubleshooting Steps & Findings:**
+1.  **Initial Attempt:** `minikube delete && minikube start --driver=docker --memory=3072mb`. Result: Did not resolve the issue; Minikube still reported `Failing to connect to https://registry.k8s.io/`.
+2.  **Host Connectivity Check:** Ran `curl -v https://registry.k8s.io/v2/` on the host machine. Result: Confirmed the host *can* reach the registry successfully.
+3.  **Docker Daemon DNS Configuration:** Modified `/etc/docker/daemon.json` to use public DNS (`8.8.8.8`, `8.8.4.4`) and restarted Docker. Encountered a JSON syntax error in `daemon.json` which was subsequently fixed.
+4.  **Minikube Restart (with DNS fix & reduced memory):** `minikube delete && minikube start --driver=docker --memory=2048mb --extra-config=kubelet.resolv-conf=/run/systemd/resolve/resolv.conf`. Result: Still failed to start the control plane, with the `Failing to connect to https://registry.k8s.io/` warning persisting.
+
+**Diagnosis:** The issue appears to be a persistent and deeper incompatibility or conflict with the Docker driver on the current system (Arch Linux) and its network configuration, preventing Minikube from establishing a stable Kubernetes cluster.
+
+**Next Proposed Solution:** Switch to a different Minikube driver to bypass the Docker driver's issues. The plan is to try the **VirtualBox driver**.
