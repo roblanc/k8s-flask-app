@@ -9,7 +9,7 @@ This project demonstrates a complete, end-to-end **Continuous Integration/Contin
 | **Application** | Created a minimal Python Flask app (`app.py`) designed to read environment variables for versioning. | Built a **Dockerfile** to containerize the application, exposing it on port 8080. |
 | **CI/CD Pipeline** | Automated the build, test, and push process upon code commit. | Configured a **GitHub Actions Workflow** (`build-and-push.yaml`) to automatically log into Docker Hub, build the image, and push it with two tags: **`:latest`** and a unique **Short Commit SHA** (`db58ece`). |
 | **Deployment** | Defined the necessary resources to run the application securely and scalably in Kubernetes. | Created `app-deploy.yaml` defining a **Deployment** (for replicas) and a **NodePort Service** (to expose the application). |
-| **Fixing the Pipeline** | Overcame persistent issues with Kubernetes using a cached image tag. | Switched the deployment manifest to use the **unique, immutable Short Commit SHA (`db58ece`)** instead of the ambiguous `:latest` tag, ensuring guaranteed pull of the new code. |
+
 | **Observability** | Prepared the environment for production-grade monitoring. | Installed **Helm** and added the necessary repository to deploy Prometheus and Grafana. |
 
 ## Current Status
@@ -38,3 +38,26 @@ The next phase of the project is to enhance production readiness by implementing
 2.  **Horizontal Pod Autoscaler (HPA):** Deploy an HPA resource to automatically scale the `flask-app-deployment` up or down based on CPU utilization, ensuring the application can handle traffic spikes.
 3.  **Liveness and Readiness Probes:** Add `livenessProbe` (to restart failed containers) and `readinessProbe` (to control service traffic) to the Deployment manifest.
 4.  **Ingress:** Replace the less efficient NodePort Service with an **Ingress resource** backed by an Ingress Controller (like NGINX), allowing traffic to be routed based on hostnames or paths on a single IP/port.
+
+## Troubleshooting
+
+### Minikube Image Pull / DNS Resolution Issues
+
+**Symptoms:**
+*   `Failing to connect to https://registry.k8s.io/ from inside the minikube container`
+*   `Error: ErrImagePull`
+*   `Failed to pull image`
+*   `dial tcp: lookup registry.k8s.io on ...: server misbehaving`
+
+**Cause:**
+Minikube environment is unable to resolve external DNS or reach image registries, often due to local network configuration, firewall, or proxy settings.
+
+**Solution:**
+1.  **Verify Host Internet Connectivity:** Ensure your host machine has unrestricted internet access and can reach `https://registry.k8s.io` directly.
+2.  **Check Firewall/Antivirus:** Temporarily disable any firewall or antivirus software on your host machine to see if it's blocking Minikube's network traffic.
+3.  **Restart Minikube:** A fresh start can sometimes resolve underlying network issues.
+    ```bash
+    minikube delete && minikube start --driver=docker --memory=3072mb
+    ```
+4.  **Consult Minikube Documentation:** Refer to the official Minikube documentation for network troubleshooting, especially if you are behind a corporate proxy or have custom DNS settings.
+5.  **Consider a Different Minikube Driver:** If the `docker` driver continues to have issues, you might consider trying `minikube start --driver=kvm2` (if KVM is installed) or `minikube start --driver=virtualbox` (if VirtualBox is installed).
