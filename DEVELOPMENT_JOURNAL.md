@@ -75,3 +75,22 @@
 **Diagnosis:** The issue appears to be a persistent and deeper incompatibility or conflict with the Docker driver on the current system (Arch Linux) and its network configuration, preventing Minikube from establishing a stable Kubernetes cluster.
 
 **Next Proposed Solution:** Switch to a different Minikube driver to bypass the Docker driver's issues. The plan is to try the **VirtualBox driver**.
+
+## October 15, 2025
+
+### Troubleshooting: Minikube VirtualBox Driver Issues
+
+**Problem:** Attempted to switch Minikube driver to VirtualBox due to persistent Docker driver issues.
+
+**Steps Taken & Findings:**
+1.  **Deleted existing Minikube cluster:** `minikube delete`
+2.  **Attempted to start Minikube with VirtualBox driver:** `minikube start --driver=virtualbox --memory=3072mb`.
+    *   **Result:** Failed with `PROVIDER_VIRTUALBOX_NOT_FOUND` error, indicating `VBoxManage` was not found.
+    *   **Resolution:** User installed VirtualBox using `sudo pacman -S virtualbox` and selected `virtualbox-host-dkms`.
+3.  **Attempted to load `vboxdrv` kernel module:** `sudo modprobe vboxdrv`.
+    *   **Result:** Command executed successfully (no output).
+4.  **Attempted to start Minikube with VirtualBox driver again:** `minikube start --driver=virtualbox --memory=3072mb`.
+    *   **Result:** Failed with `IF_VBOX_NOT_VISIBLE` error: "The host-only adapter we just created is not visible. This is a well known VirtualBox bug."
+    *   **Suggestion from Minikube:** Reboot to complete VirtualBox installation.
+
+**Current Status:** VirtualBox is installed, and the `vboxdrv` kernel module is loaded, but Minikube is still unable to start due to a VirtualBox host-only adapter issue. A system reboot has been suggested as the next step.
